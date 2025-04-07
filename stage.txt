@@ -1,1 +1,37 @@
 pipeline b docker fiha hdfs hive spark impala mn ba3d nzido kafka w partie streaming .
+
+
+
+
+                        ┌────────────────────┐
+                        │    Raw Data        │
+                        │ (Logs, CSV, JSON)  │
+                        └────────┬───────────┘
+                                 │
+                                 ▼
+                        ┌────────────────────┐
+                        │        HDFS         │
+                        │  (Distributed Storage) │
+                        └────────┬───────────┘
+                                 │
+           ┌─────────────────────┴──────────────────────┐
+           │                                            │
+           ▼                                            ▼
+   ┌────────────────────┐                       ┌────────────────────┐
+   │       Hive         │                      		    │       Spark        │
+   │ - Table definitions│                       		│ - ETL & processing │
+   │ - SQL (HiveQL)     │	◄────── Metadata ─────►	│ - Machine Learning │
+   └────────┬───────────┘                       └────────┬───────────┘
+            │                                            │
+            ▼                                            ▼
+   ┌────────────────────────┐                 ┌────────────────────────┐
+   │ Hive Tables (Structured│◄────── Output ──		 ┤ Cleaned Data in Hive or│
+   │  Data in HDFS)         │                			 │       HDFS             │
+   └────────┬───────────────┘                 └────────┬───────────────┘
+            │                                            │
+            ▼                                            ▼
+   ┌────────────────────┐                       ┌────────────────────┐
+   │      Impala        │	◄────── Metadata ─────►	│  Hive Metastore    │
+   │ - Fast SQL Queries │                       		│ (shared catalog)   │
+   │ - Dashboards/BI    │                     		  └────────────────────┘
+   └────────┬───────────┘
