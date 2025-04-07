@@ -1,0 +1,1 @@
+pipeline b docker fiha hdfs hive spark impala mn ba3d nzido kafka w partie streaming .
