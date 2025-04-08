@@ -1,73 +1,113 @@
-version: '3.8'
+name: hadoop-cluster
+
+# services:
+
+#   namenode:
+#     image: apache/hadoop:3.4.1
+#     container_name: hadoop-namenode
+#     # environment:
+#     #   - HADOOP_HOME=/opt/hadoop
+#     #   - HDFS_NAMENODE_USER=root
+#     #   - HDFS_DATANODE_USER=root
+#     # volumes:
+#     #   - namenode_data:/hadoop/dfs/name
+#     #   - ./start-hdfs.sh:/start-hdfs.sh
+#     #   - ./hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+#     #   - ./hadoop_config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+#     ports:
+#       - "9870:9870"  # Namenode Web UI
+#       - "9000:9000"  # HDFS port (optional but useful)
+#     # command: ["/bin/bash", "./start-hdfs.sh"]
+#     # networks:
+#     #   hdfs_network:
+#     #     ipv4_address: 172.20.0.1
+
+#   datanode1:
+#     image: apache/hadoop:3.4.1
+#     container_name: hadoop-datanode1
+#     # environment:
+#     #   - HADOOP_HOME=/opt/hadoop
+#     #   - HDFS_NAMENODE_USER=root
+#     #   - HDFS_DATANODE_USER=root
+#     # volumes:
+#     #   - ./hadoop_datanode1:/hadoop/dfs/data
+#     #   - ./init-datanode.sh:/init-datanode.sh
+#     #   - ./hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+#     #   - ./hadoop_config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+#     ports:
+#       - "9864:9864"
+#     depends_on:
+#       - namenode
+#     # command: ["/bin/bash", "./init-datanode.sh"]
+#     # networks:
+#     #   hdfs_network:
+#     #     ipv4_address: 172.20.0.2
+
+#   # datanode2:
+#   #   image: apache/hadoop:3.4.1
+#   #   container_name: hadoop-datanode2
+#   #   environment:
+#   #     - HADOOP_HOME=/opt/hadoop
+#   #     - HDFS_NAMENODE_USER=root
+#   #     - HDFS_DATANODE_USER=root
+#   #   volumes:
+#   #     - ./hadoop_datanode2:/hadoop/dfs/data
+#   #     - ./init-datanode.sh:/init-datanode.sh
+#   #     - ./hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+#   #     - ./hadoop_config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+#   #   ports:
+#   #     - "9865:9864"
+#   #   command: ["/bin/bash", "/init-datanode.sh"]
+#   #   # networks:
+#   #   #   hdfs_network:
+#   #   #     ipv4_address: 172.20.0.3
+
+# volumes:
+#   namenode_data:
+#   datanode1_data:
+#   datanode2_data:
+
+# # networks:
+# #   hdfs_network:
+# #     ipam:
+# #       driver: default
+# #       config:
+# #         - subnet: 172.20.0.0/16
+#########################################################################################################
+
 
 services:
-
   namenode:
-    image: apache/hadoop:3.4.1
-    container_name: hadoop-namenode
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
     environment:
-      - HADOOP_HOME=/opt/hadoop
-      - HDFS_NAMENODE_USER=root
-      - HDFS_DATANODE_USER=root
-    volumes:
-      - namenode_data:/hadoop/dfs/name
-      - ./start-hdfs.sh:/start-hdfs.sh
-      - ./hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
-      - ./hadoop_config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - CLUSTER_NAME=test-hadoop
     ports:
-      - "9870:9870"  # Namenode Web UI
-      - "9000:9000"  # HDFS port (optional but useful)
-    command: ["/bin/bash", "/start-hdfs.sh"]
+      - "9870:9870"  # Web UI
+      - "9000:9000"  # NameNode RPC
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
     networks:
-      hdfs_network:
-        ipv4_address: 172.20.0.1
+      - hadoop
 
-  datanode1:
-    image: apache/hadoop:3.4.1
-    container_name: hadoop-datanode1
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
     environment:
-      - HADOOP_HOME=/opt/hadoop
-      - HDFS_NAMENODE_USER=root
-      - HDFS_DATANODE_USER=root
-    volumes:
-      - datanode1_data:/hadoop/dfs/data
-      - ./init-datanode.sh:/init-datanode.sh
-      - ./hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
-      - ./hadoop_config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - CLUSTER_NAME=test-hadoop
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    depends_on:
+      - namenode
     ports:
-      - "9864:9864"
-    command: ["/bin/bash", "/init-datanode.sh"]
-    networks:
-      hdfs_network:
-        ipv4_address: 172.20.0.2
-
-  datanode2:
-    image: apache/hadoop:3.4.1
-    container_name: hadoop-datanode2
-    environment:
-      - HADOOP_HOME=/opt/hadoop
-      - HDFS_NAMENODE_USER=root
-      - HDFS_DATANODE_USER=root
+      - "9864:9864"  # DataNode Web UI
     volumes:
-      - datanode2_data:/hadoop/dfs/data
-      - ./init-datanode.sh:/init-datanode.sh
-      - ./hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
-      - ./hadoop_config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
-    ports:
-      - "9865:9864"
-    command: ["/bin/bash", "/init-datanode.sh"]
+      - hadoop_datanode:/hadoop/dfs/data
     networks:
-      hdfs_network:
-        ipv4_address: 172.20.0.3
+      - hadoop
 
 volumes:
-  namenode_data:
-  datanode1_data:
-  datanode2_data:
+  hadoop_namenode:
+  hadoop_datanode:
 
 networks:
-  hdfs_network:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.20.0.0/16
+  hadoop:
