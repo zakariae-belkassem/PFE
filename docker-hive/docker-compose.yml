@@ -43,7 +43,7 @@ services:
     image: bde2020/hive-metastore-postgresql:2.3.0
   spark-master:
     container_name: spark_master
-    image: bde2020/spark-master:2.4.5-hadoop2.7
+    image: bde2020/spark-master:latest
     environment:
       - INIT_DAEMON_STEP=spark-master
       - SPARK_MODE=master
@@ -56,7 +56,7 @@ services:
 
   spark-worker:
     container_name: spark_worker
-    image: bde2020/spark-worker:2.4.5-hadoop2.7
+    image: bde2020/spark-worker:latest
     environment:
       - INIT_DAEMON_STEP=spark-worker
       - SPARK_MASTER=spark://spark-master:7077
