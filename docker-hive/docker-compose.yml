@@ -1,4 +1,4 @@
-name: hadoop-cluster
+name: HDFS
 
 services:
   namenode:
@@ -39,14 +39,10 @@ services:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
     ports:
       - "9083:9083"
- 
-  # presto-coordinator:
-  #   image: shawnzhu/prestodb:0.181
-  #   ports:
-  #     - "8888:8888"
-  #   network_mode: host
-  
+  hive-metastore-postgresql:
+    image: bde2020/hive-metastore-postgresql:2.3.0
   spark-master:
+    container_name: spark_master
     image: bde2020/spark-master:2.4.5-hadoop2.7
     environment:
       - INIT_DAEMON_STEP=spark-master
@@ -59,6 +55,7 @@ services:
       - ./config/hive-site.xml:/opt/spark/conf/hive-site.xml
 
   spark-worker:
+    container_name: spark_worker
     image: bde2020/spark-worker:2.4.5-hadoop2.7
     environment:
       - INIT_DAEMON_STEP=spark-worker
@@ -70,6 +67,7 @@ services:
     volumes:
       - ./config/core-site.xml:/opt/spark/conf/core-site.xml
       - ./config/hive-site.xml:/opt/spark/conf/hive-site.xml
+
 volumes:
   namenode:
   datanode:
