@@ -43,7 +43,7 @@ services:
     image: bde2020/hive-metastore-postgresql:2.3.0
   spark-master:
     container_name: spark_master
-    image: bde2020/spark-master:latest
+    image: custom-spark:latest
     environment:
       - INIT_DAEMON_STEP=spark-master
       - SPARK_MODE=master
@@ -51,8 +51,8 @@ services:
       - "7077:7077"
       - "8080:8080"
     volumes:
-      - ./config/core-site.xml:/opt/spark/conf/core-site.xml
-      - ./config/hive-site.xml:/opt/spark/conf/hive-site.xml
+      - ./core-site.xml:/opt/spark/conf/core-site.xml
+      - ./hive-site.xml:/opt/spark/conf/hive-site.xml
 
   spark-worker:
     container_name: spark_worker
@@ -65,8 +65,8 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./config/core-site.xml:/opt/spark/conf/core-site.xml
-      - ./config/hive-site.xml:/opt/spark/conf/hive-site.xml
+      - ./core-site.xml:/opt/spark/conf/core-site.xml
+      - ./hive-site.xml:/opt/spark/conf/hive-site.xml
 
 volumes:
   namenode:
