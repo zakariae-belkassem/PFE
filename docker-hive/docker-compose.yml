@@ -72,9 +72,78 @@ services:
     volumes:
       - ./core-site.xml:/opt/spark/conf/core-site.xml
       - ./hive-site.xml:/opt/spark/conf/hive-site.xml
-
+ 
 volumes:
   namenode:
   datanode:
-  impala-state-store:
-  impala-catalog:
+  # impala-state-store:
+  # impala-catalog:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ # impala:
+   
+  #   image: ibisproject/impala
+  #   hostname: localhost
+  #   external_links:
+  #   - hive-metastore-postgresql
+  #   environment:
+  #     PGPASSWORD: hive
+  #   networks:
+  #     impala-net:
+  #       aliases:
+  #       - impala_net
+  #   ports:
+  #   # Impala
+  #   - 21000:21000
+  #   - 21050:21050
+  #   - 25000:25000
+  #   - 25010:25010
+  #   - 25020:25020
